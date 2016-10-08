@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# Use github.com/zaltoprofen/sampler
+#
+# install sampler:
+# go get -u github.com/zaltoprofen/sampler/cmd/sampler
+#
+# ———忘れるな、イメージするものは常に最強の自分だ。外敵など要らぬ。
+# お前にとって戦う相手とは、自身のイメージに他ならない。
+
+bgm=$HOME'/Music/iTunes/iTunes Media/Music/Compilations/Fate_stay night [Realta Nua] ORIGINAL SOUNDTRACK/2-23 エミヤ.m4a'
+pid_file=/tmp/mplayer.pid
+
+if ! which sampler &>/dev/null; then
+  echo "not found sampler." >&2
+  if which go &>/dev/null; then
+    bash -x -c "go get -u -v github.com/zaltoprofen/sampler/cmd/sampler" >&2
+  else
+    exit 1
+  fi
+fi
+
+chant_interval=2
+while [ $# -gt 0 ]; do
+  case "$1" in
+    "--no-bgm")
+      no_bgm=1
+      shift 1
+      ;;
+    "--single-action")
+      single_action=1
+      shift 1
+      ;;
+    "--chant-interval")
+      chant_interval=$2
+      shift 2
+      ;;
+    *)
+      echo "unknown option" >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "$no_bgm" ] && [ -n "$bgm" ] && [ -f "$bgm" ] && which mplayer &>/dev/null
+then
+  if [ -f "$pid_file" ]; then
+    kill -QUIT $(cat $pid_file) &>/dev/null
+    rm "$pid_file"
+  fi
+  mplayer -vo null "$bgm" </dev/null >/dev/null 2>&1 & echo $! > "$pid_file"
+fi
+
+if [ -z "$single_action" ]; then
+  while read chant; do
+    echo "$chant" >&2
+    sleep $chant_interval
+  done
+fi <<EOS
+I am the bone of my sword.
+Steel is my body, and fire is my blood.
+I have created over a thousand blades.
+Unknown to Death.
+Nor known to Life.
+Have withstood pain to create many weapons.
+Yet, those hands will never hold anything.
+So as I pray, unlimited blade works.
+EOS
+
+sampler -k 1 <<EOS
+almace
+aroundight
+asi
+attila
+caladbolg
+caliburn
+claiomh-solais
+colada
+crocea-mors
+curtana
+dainsleif
+durendal
+dyrnwyn
+excalibur
+flaming-sword
+fragarach
+gallatin
+gan-jiang-and-mo-ye
+gram
+harpe
+hauteclere
+hofud
+hrotti
+hrunting
+joyeuse
+kladenets
+kusanagi
+laevateinn
+legbiter
+mistilteinn
+murgleys
+naegling
+nandaka
+precieuse
+ridill
+shamshir-e-zomorrodnegar
+skofnung
+thuan-thien
+tizona
+totsuka-no-tsurugi
+tyrfing
+vorpal-sword
+zulfiqar
+EOS

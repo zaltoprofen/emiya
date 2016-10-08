@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if ! which unlimited-blade-works &>/dev/null; then
+  echo "Farewell. Drown in your ideals and die." >&2
+  exit 1
+fi
+
+candidate=$(unlimited-blade-works --no-bgm --single-action)
+while true; do
+  echo -n "would you like to mkdir \"$candidate\" ? [Y/n]: "
+  read reply
+  if [ "$reply" = 'n' ]; then
+    exit
+  elif [ "$reply" = 'y' ] || [ "$reply" = 'Y' ] || [ -z "$reply" ]; then
+    bash -x -c "mkdir \"$candidate\""
+    exit
+  fi
+done
